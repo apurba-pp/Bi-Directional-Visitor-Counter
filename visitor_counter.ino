@@ -1,6 +1,8 @@
 #include <LiquidCrystal.h>
 
 LiquidCrystal lcd(1,2,3,4,5,6);
+
+//designating pin names
 const int trigPin = 10;
 const int trigPin1 = 12;
 const int echoPin = 9;
@@ -36,7 +38,8 @@ void loop() {
   digitalWrite(trigPin, LOW);
   
   duration=pulseIn(echoPin, HIGH);
-  distance= duration*0.034/2;
+  distance= duration*0.034/2;                            //distance from sensor 1
+  
   
   digitalWrite(trigPin1, LOW);
   delayMicroseconds(2);
@@ -45,7 +48,9 @@ void loop() {
   digitalWrite(trigPin1, LOW);
   
   duration1=pulseIn(echoPin1, HIGH);
-  distance1= duration1*0.034/2;
+  distance1= duration1*0.034/2;                          //distance from sensor 2
+  
+  
   delay(700);
   
   digitalWrite(trigPin, LOW);
@@ -55,7 +60,7 @@ void loop() {
   digitalWrite(trigPin, LOW);
   
   durationNew=pulseIn(echoPin, HIGH);
-  distanceNew= durationNew*0.034/2;
+  distanceNew= durationNew*0.034/2;                     //New distance from Sensor 1
   
 
   
@@ -66,65 +71,66 @@ void loop() {
   digitalWrite(trigPin1, LOW);
   
   durationNew1=pulseIn(echoPin1, HIGH);
-  distanceNew1= durationNew1*0.034/2;
+  distanceNew1= durationNew1*0.034/2;                   //New distance from Sensor 2
   
 
-  while((11*(distanceNew)/10) < distance)
-  {
+  while((11*(distanceNew)/10) < distance)               //Comparing the new and old distance of sensor 1 with a error margin of 10%
+  {                                                     //Therefore goes into the loop if something is detected in sensor 1
     if(flag1==0){
-        flag1=1;
+        flag1=1;                                        //flag1 set to 1
     }
         digitalWrite(trigPin1, LOW);
-  		delayMicroseconds(2);
-        digitalWrite(trigPin1, HIGH);
+  		  delayMicroseconds(2);
+        digitalWrite(trigPin1, HIGH);                  //sensor 1 has been isolated but sensor 2 is still sending ultrasonic in loop
         delayMicroseconds(10);
         digitalWrite(trigPin1, LOW);
 
         durationNew1=pulseIn(echoPin1, HIGH);
         distanceNew1= durationNew1*0.034/2;
-    	delay(100);
-    	if((11*(distanceNew1)/10)<distance1)
-  		{
-    		count=count+1;
+    
+    	  delay(100);
+    
+    	  if((11*(distanceNew1)/10)<distance1)           //searching for any change in new distance of sensor 2
+  		  {
+    		    count=count+1;                             //if found then the person has entered the room
 
-          	digitalWrite(buzz, HIGH);
+          	digitalWrite(buzz, HIGH);                  //Set the buzzer on
         	
-        	break;
-  		}
+        	  break;
+  		  }
   } 
-  while((11*(distanceNew1)/10)<distance1&& flag1==0)
-  {
+  while((11*(distanceNew1)/10)<distance1&& flag1==0)  //Comparing the new and old distance of sensor 1 with a error margin of 10%
+  {                                                   //Therefore goes into the loop if something is detected in sensor 1
     if(flag2==0){
-        flag2=1;
+        flag2=1;                                      //flag1 set to 1
     }
       digitalWrite(trigPin, LOW);
       delayMicroseconds(2);
-      digitalWrite(trigPin, HIGH);
+      digitalWrite(trigPin, HIGH);                     //sensor 2 has been isolated but sensor 1 is still sending ultrasonic in loop
       delayMicroseconds(10);
       digitalWrite(trigPin, LOW);
 
       durationNew=pulseIn(echoPin, HIGH);
       distanceNew= durationNew*0.034/2;
       delay(100);
-      if((11*(distanceNew)/10)<distance)
+      if((11*(distanceNew)/10)<distance)               //searching for any change in new distance of sensor 1
   		{
-    		count=count-1;
+    		count=count-1;                                 //if found then the person has exited the room
         	break;
   		}
   } 
 
-  lcd.setCursor(0,1);
+  lcd.setCursor(0,1);                                  //LCD screen cursor set to second row first column
 
   if(count>=0)
   {
-
-    lcd.print(count);
+    lcd.print(count);                                  //printing no. of people inside if count is grater than 0
   }
   else
   {
-    lcd.print(0);
+    lcd.print(0);                                      //else no. of people inside is zero
   }
   delay(100);
-  digitalWrite(buzz, LOW);
+  digitalWrite(buzz, LOW);                             //buzzer set off
 
 }
